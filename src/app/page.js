@@ -235,51 +235,32 @@ export default function JRStoreApp() {
     .map((item) => `${item.quantity}x ${item.title}`)
     .join(', ')
 
+  const customer = customerName || 'Cliente'
+
   const message = encodeURIComponent(
-    `Olá! Acabei de realizar uma compra na ${storeSettings.storeName}.\n\nPedido: ${orderNumber}\nNome: ${
-      customerName || 'Cliente'
-    }\nItens: ${itemsText}\nTotal: ${formatPrice(
-      cartTotal
-    )}\n\nSegue o comprovante do PIX para receber minha key Steam.`
+    `Olá, JR Store! Acabei de realizar uma compra.\n\n` +
+      `Pedido: ${orderNumber}\n` +
+      `Nome: ${customer}\n` +
+      `Produto(s): ${itemsText}\n` +
+      `Total: ${formatPrice(cartTotal)}\n\n` +
+      `Já realizei o pagamento via PIX e vou enviar o comprovante aqui no WhatsApp.\n\n` +
+      `Aguardo o envio da minha key Steam.`
   )
 
   const newOrder = {
     id: orderNumber,
-    customer: customerName || 'Cliente',
+    customer,
     items: itemsText,
     total: cartTotal,
     status: 'Aguardando comprovante',
     date: new Date().toLocaleDateString('pt-BR'),
   }
 
-  addOrder(newOrder)
+  await addOrder(newOrder)
 
   setOrders((currentOrders) => [newOrder, ...currentOrders])
 
-  const pixResponse = await fetch('/api/create-pix', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      title: 'Compra JR Store',
-      price: cartTotal,
-      name: customerName || 'Cliente',
-      email: 'cliente@email.com',
-    }),
-  })
-
-  const pixData = await pixResponse.json()
-
-  alert(
-    `PIX gerado com sucesso!\n\nCódigo PIX:\n\n${
-      pixData.qr_code ||
-      pixData.qr_code_base64 ||
-      'PIX gerado, mas o código não foi retornado.'
-    }`
-  )
-
-  window.open(`https://wa.me/${storeSettings.whatsapp}?text=${message}`, '_blank')
+  window.open(`https://wa.me/5581984836520?text=${message}`, '_blank')
 }
   function addGame() {
     if (!newGame.title || !newGame.price) return
