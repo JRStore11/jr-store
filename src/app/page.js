@@ -309,12 +309,18 @@ export default function JRStoreApp() {
   }
 
   function markOrderAsDelivered(orderId) {
-    setOrders((currentOrders) =>
-      currentOrders.map((order) =>
-        order.id === orderId ? { ...order, status: 'Entregue' } : order
-      )
+  setOrders((currentOrders) => {
+    const updatedOrders = currentOrders.map((order) =>
+      order.id === orderId
+        ? { ...order, status: 'Entregue' }
+        : order
     )
-  }
+
+    localStorage.setItem('jr_orders', JSON.stringify(updatedOrders))
+
+    return updatedOrders
+  })
+}
 
   function AdminLogin() {
     function handleLogin() {
