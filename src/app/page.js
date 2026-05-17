@@ -17,6 +17,7 @@ export default function JRStoreApp() {
   const [loginError, setLoginError] = useState('')
   const [adminTab, setAdminTab] = useState('dashboard')
   const [cart, setCart] = useState([])
+  const [orders, setOrders] = useState([])
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [customerName, setCustomerName] = useState('')
@@ -94,16 +95,6 @@ export default function JRStoreApp() {
     featured: true,
   })
 
-  const [orders, setOrders] = useState([
-    {
-      id: 'JR-102391',
-      customer: 'Cliente Teste',
-      items: '1x Elden Ring',
-      total: 149.9,
-      status: 'Aguardando comprovante',
-      date: '15/05/2026',
-    },
-  ])
 
  useEffect(() => {
   async function loadFirebaseData() {
