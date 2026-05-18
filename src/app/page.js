@@ -350,9 +350,9 @@ const data = await response.json()
         await signInWithEmailAndPassword(auth, adminEmail, adminPassword)
         setAdminLogged(true)
         setLoginError('')
-      } catch (error) {
-        setLoginError(error.code)
-console.log(error)
+        } catch (error) {
+           setLoginError(error.code)
+          console.log(error)
       }
     }
 
