@@ -149,16 +149,7 @@ export default function JRStoreApp() {
     return `JR-${Date.now().toString().slice(-6)}`
   }, [checkoutOpen])
 
-  const pixCopyPaste = useMemo(() => {
-    const total = cartTotal.toFixed(2)
-    return `00020126360014BR.GOV.BCB.PIX0114${storeSettings.pixKey}520400005303986540${total}5802BR5910JR STORE6006RECIFE62070503***6304ABCD`
-  }, [cartTotal, storeSettings.pixKey])
-
-  const qrCodeUrl = useMemo(() => {
-    return `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(
-      pixCopyPaste
-    )}`
-  }, [pixCopyPaste])
+  const [pixData, setPixData] = useState(null)
 
   function addToCart(game) {
     if (game.stock <= 0) return
@@ -206,16 +197,41 @@ export default function JRStoreApp() {
     setCart([])
   }
 
-  function openCheckout() {
-    if (cart.length === 0) return
-    setIsCartOpen(false)
-    setCheckoutOpen(true)
-    setCopiedPix(false)
+  async function openCheckout() {
+  if (cart.length === 0) return
+
+  setIsCartOpen(false)
+  setCheckoutOpen(true)
+  setCopiedPix(false)
+
+  try {
+    const response = await fetch('/api/create-pix', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        price: cartTotal,
+        title: 'Compra JR Store',
+        name: customerName || 'Cliente',
+        email: 'cliente@email.com',
+      }),
+    })
+
+    const data = await response.json()
+
+    console.log('PIX GERADO:', data)
+
+    setPixData(data)
+  } catch (error) {
+    console.error(error)
+    alert('Erro ao gerar PIX')
   }
+}
 
   async function copyPixCode() {
     try {
-      await navigator.clipboard.writeText(pixCopyPaste)
+      await navigator.clipboard.writeText(pixData?.qr_code || '')
       setCopiedPix(true)
     } catch (error) {
       setCopiedPix(false)
@@ -976,12 +992,20 @@ export default function JRStoreApp() {
                 </p>
 
                 <div className="mx-auto mt-6 w-fit rounded-3xl bg-white p-4">
-                  <img src={qrCodeUrl} alt="QR Code PIX" className="h-64 w-64" />
+                  {pixData?.qr_code_base64 && (
+                  <img
+                    src={`data:image/png;base64,${pixData.qr_code_base64}`}
+                    alt="PIX QR Code"
+                    className="mx-auto rounded-3xl"
+                  />
+                )}
                 </div>
 
                 <div className="mt-6 rounded-2xl border border-cyan-500/10 bg-[#0b1120] p-4 text-left">
                   <p className="mb-2 text-sm font-bold text-slate-300">PIX copia e cola</p>
-                  <p className="break-all text-xs text-slate-400">{pixCopyPaste}</p>
+                  <p className="break-all text-xs text-slate-400">
+                    {pixData?.qr_code || ''}
+                  </p>
                 </div>
 
                 <button
