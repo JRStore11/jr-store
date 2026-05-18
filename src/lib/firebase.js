@@ -1,8 +1,9 @@
 import { initializeApp } from 'firebase/app'
 import { getDatabase } from 'firebase/database'
+import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA0JIcjka1zCRZfv3o4eoi2xXMtCEi6Vs",
+  apiKey: "AIzaSyA0JIcjka1zCRZfv3o4eoi2xMtCEi6Vs",
   authDomain: "jr-store-1461b.firebaseapp.com",
   databaseURL: "https://jr-store-1461b-default-rtdb.firebaseio.com",
   projectId: "jr-store-1461b",
@@ -14,5 +15,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 
 export const database = getDatabase(app)
+
+export const auth = getAuth(app)
 
 export default app

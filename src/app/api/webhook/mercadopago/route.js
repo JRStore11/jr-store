@@ -2,11 +2,14 @@ export async function POST(request) {
   try {
     const body = await request.json()
 
-    console.log('Webhook recebido:', body)
+    console.log('Pagamento recebido:', body)
+
+    if (body.action === 'payment.updated') {
+      console.log('PIX aprovado!')
+    }
 
     return Response.json({
       success: true,
-      received: body,
     })
   } catch (error) {
     console.log(error)

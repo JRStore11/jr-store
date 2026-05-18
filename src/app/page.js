@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { auth } from '../lib/firebase'
 import {
   getProducts,
   addProduct,
@@ -13,6 +15,7 @@ import {
 export default function JRStoreApp() {
   const [view, setView] = useState('store')
   const [adminLogged, setAdminLogged] = useState(false)
+  const [adminEmail, setAdminEmail] = useState('admin@jrstore.com')
   const [adminPassword, setAdminPassword] = useState('')
   const [loginError, setLoginError] = useState('')
   const [adminTab, setAdminTab] = useState('dashboard')
@@ -95,27 +98,26 @@ export default function JRStoreApp() {
     featured: true,
   })
 
+  useEffect(() => {
+    async function loadFirebaseData() {
+      try {
+        const firebaseProducts = await getProducts()
+        const firebaseOrders = await getOrders()
 
- useEffect(() => {
-  async function loadFirebaseData() {
-    try {
-      const firebaseProducts = await getProducts()
-      const firebaseOrders = await getOrders()
+        if (firebaseProducts.length > 0) {
+          setGames(firebaseProducts)
+        }
 
-      if (firebaseProducts.length > 0) {
-        setGames(firebaseProducts)
+        if (firebaseOrders.length > 0) {
+          setOrders(firebaseOrders)
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados do Firebase:', error)
       }
-
-      if (firebaseOrders.length > 0) {
-        setOrders(firebaseOrders)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar dados do Firebase:', error)
     }
-  }
 
-  loadFirebaseData()
-}, [])
+    loadFirebaseData()
+  }, [])
 
   const categories = useMemo(() => ['Todos', ...new Set(games.map((game) => game.category || 'Outros'))], [games])
 
@@ -222,38 +224,39 @@ export default function JRStoreApp() {
   }
 
   async function sendReceiptToWhatsapp() {
-  const itemsText = cart
-    .map((item) => `${item.quantity}x ${item.title}`)
-    .join(', ')
+    const itemsText = cart
+      .map((item) => `${item.quantity}x ${item.title}`)
+      .join(', ')
 
-  const customer = customerName || 'Cliente'
+    const customer = customerName || 'Cliente'
 
-  const message = encodeURIComponent(
-    `Olá, JR Store! Acabei de realizar uma compra.\n\n` +
-      `Pedido: ${orderNumber}\n` +
-      `Nome: ${customer}\n` +
-      `Produto(s): ${itemsText}\n` +
-      `Total: ${formatPrice(cartTotal)}\n\n` +
-      `Já realizei o pagamento via PIX e vou enviar o comprovante aqui no WhatsApp.\n\n` +
-      `Aguardo o envio da minha key Steam.`
-  )
+    const message = encodeURIComponent(
+      `Olá, JR Store! Acabei de realizar uma compra.\n\n` +
+        `Pedido: ${orderNumber}\n` +
+        `Nome: ${customer}\n` +
+        `Produto(s): ${itemsText}\n` +
+        `Total: ${formatPrice(cartTotal)}\n\n` +
+        `Já realizei o pagamento via PIX e vou enviar o comprovante aqui no WhatsApp.\n\n` +
+        `Aguardo o envio da minha key Steam.`
+    )
 
-  const newOrder = {
-    id: orderNumber,
-    customer,
-    items: itemsText,
-    total: cartTotal,
-    status: 'Aguardando comprovante',
-    date: new Date().toLocaleDateString('pt-BR'),
+    const newOrder = {
+      id: orderNumber,
+      customer,
+      items: itemsText,
+      total: cartTotal,
+      status: 'Aguardando comprovante',
+      date: new Date().toLocaleDateString('pt-BR'),
+    }
+
+    await addOrder(newOrder)
+
+    setOrders((currentOrders) => [newOrder, ...currentOrders])
+
+    window.open(`https://wa.me/5581984836520?text=${message}`, '_blank')
   }
 
-  await addOrder(newOrder)
-
-  setOrders((currentOrders) => [newOrder, ...currentOrders])
-
-  window.open(`https://wa.me/5581984836520?text=${message}`, '_blank')
-}
-  function addGame() {
+  async function addGame() {
     if (!newGame.title || !newGame.price) return
 
     const game = {
@@ -269,27 +272,32 @@ export default function JRStoreApp() {
       featured: newGame.featured,
     }
 
-    addProduct(game)
+    await addProduct(game)
 
     setGames((currentGames) => [game, ...currentGames])
     setNewGame({ title: '', price: '', stock: '', image: '', category: 'Ação', oldPrice: '', featured: true })
   }
 
-  function removeGame(gameId) {
+  async function removeGame(gameId) {
     setGames((currentGames) => currentGames.filter((game) => game.id !== gameId))
+    await deleteProduct(String(gameId))
   }
 
-  function updateGame(gameId, field, value) {
+  async function updateGame(gameId, field, value) {
+    const parsedValue = field === 'price' || field === 'stock' ? Number(value) : value
+
     setGames((currentGames) =>
       currentGames.map((game) =>
         game.id === gameId
           ? {
               ...game,
-              [field]: field === 'price' || field === 'stock' ? Number(value) : value,
+              [field]: parsedValue,
             }
           : game
       )
     )
+
+    await updateProduct(String(gameId), { [field]: parsedValue })
   }
 
   function openOrderWhatsapp(order) {
@@ -300,26 +308,27 @@ export default function JRStoreApp() {
   }
 
   function markOrderAsDelivered(orderId) {
-  setOrders((currentOrders) => {
-    const updatedOrders = currentOrders.map((order) =>
-      order.id === orderId
-        ? { ...order, status: 'Entregue' }
-        : order
-    )
+    setOrders((currentOrders) => {
+      const updatedOrders = currentOrders.map((order) =>
+        order.id === orderId
+          ? { ...order, status: 'Entregue' }
+          : order
+      )
 
-    localStorage.setItem('jr_orders', JSON.stringify(updatedOrders))
+      localStorage.setItem('jr_orders', JSON.stringify(updatedOrders))
 
-    return updatedOrders
-  })
-}
+      return updatedOrders
+    })
+  }
 
   function AdminLogin() {
-    function handleLogin() {
-      if (adminPassword === 'admin123') {
+    async function handleLogin() {
+      try {
+        await signInWithEmailAndPassword(auth, adminEmail, adminPassword)
         setAdminLogged(true)
         setLoginError('')
-      } else {
-        setLoginError('Senha incorreta. Senha provisória: admin123')
+      } catch (error) {
+        setLoginError('E-mail ou senha incorretos. Verifique os dados do Firebase Authentication.')
       }
     }
 
@@ -332,6 +341,19 @@ export default function JRStoreApp() {
           </p>
 
           <label className="mt-8 block">
+            <span className="mb-2 block text-sm font-bold text-slate-300">
+              E-mail do administrador
+            </span>
+            <input
+              type="email"
+              value={adminEmail}
+              onChange={(event) => setAdminEmail(event.target.value)}
+              placeholder="admin@jrstore.com"
+              className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400"
+            />
+          </label>
+
+          <label className="mt-4 block">
             <span className="mb-2 block text-sm font-bold text-slate-300">
               Senha do administrador
             </span>
@@ -362,7 +384,7 @@ export default function JRStoreApp() {
           </button>
 
           <p className="mt-5 text-xs text-slate-500">
-            Esta é uma senha provisória para protótipo. Na versão real, o login será feito com Firebase Authentication.
+            Login protegido com Firebase Authentication.
           </p>
         </div>
       </div>
@@ -409,7 +431,8 @@ export default function JRStoreApp() {
             </button>
 
             <button
-              onClick={() => {
+              onClick={async () => {
+                await signOut(auth)
                 setAdminLogged(false)
                 setAdminPassword('')
               }}
@@ -474,12 +497,62 @@ export default function JRStoreApp() {
                   <h3 className="text-2xl font-black text-cyan-400">Adicionar jogo</h3>
 
                   <div className="mt-6 space-y-4">
-                    <AdminInput label="Nome do jogo" value={newGame.title} onChange={(v) => setNewGame({ ...newGame, title: v })} />
-                    <AdminInput label="Preço" type="number" value={newGame.price} onChange={(v) => setNewGame({ ...newGame, price: v })} />
-                    <AdminInput label="Estoque de keys" type="number" value={newGame.stock} onChange={(v) => setNewGame({ ...newGame, stock: v })} />
-                    <AdminInput label="Categoria" value={newGame.category} onChange={(v) => setNewGame({ ...newGame, category: v })} />
-                    <AdminInput label="Preço antigo/promocional" type="number" value={newGame.oldPrice} onChange={(v) => setNewGame({ ...newGame, oldPrice: v })} />
-                    <AdminInput label="URL da imagem/capa" value={newGame.image} onChange={(v) => setNewGame({ ...newGame, image: v })} />
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-bold text-slate-300">Nome do jogo</span>
+                      <input
+                        value={newGame.title}
+                        onChange={(e) => setNewGame({ ...newGame, title: e.target.value })}
+                        className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition focus:border-cyan-400"
+                      />
+                    </label>
+
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-bold text-slate-300">Preço</span>
+                      <input
+                        type="number"
+                        value={newGame.price}
+                        onChange={(e) => setNewGame({ ...newGame, price: e.target.value })}
+                        className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition focus:border-cyan-400"
+                      />
+                    </label>
+
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-bold text-slate-300">Estoque de keys</span>
+                      <input
+                        type="number"
+                        value={newGame.stock}
+                        onChange={(e) => setNewGame({ ...newGame, stock: e.target.value })}
+                        className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition focus:border-cyan-400"
+                      />
+                    </label>
+
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-bold text-slate-300">Categoria</span>
+                      <input
+                        value={newGame.category}
+                        onChange={(e) => setNewGame({ ...newGame, category: e.target.value })}
+                        className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition focus:border-cyan-400"
+                      />
+                    </label>
+
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-bold text-slate-300">Preço antigo/promocional</span>
+                      <input
+                        type="number"
+                        value={newGame.oldPrice}
+                        onChange={(e) => setNewGame({ ...newGame, oldPrice: e.target.value })}
+                        className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition focus:border-cyan-400"
+                      />
+                    </label>
+
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-bold text-slate-300">URL da imagem/capa</span>
+                      <input
+                        value={newGame.image}
+                        onChange={(e) => setNewGame({ ...newGame, image: e.target.value })}
+                        className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition focus:border-cyan-400"
+                      />
+                    </label>
 
                     <button
                       onClick={addGame}
@@ -562,7 +635,13 @@ export default function JRStoreApp() {
                           <td className="p-4 text-slate-300">{order.items}</td>
                           <td className="p-4">{formatPrice(order.total)}</td>
                           <td className="p-4">
-                            <span className="rounded-full bg-cyan-500/10 px-3 py-1 text-sm text-cyan-300">
+                            <span
+                              className={`rounded-full px-3 py-1 text-sm font-bold ${
+                                order.status === 'Entregue'
+                                  ? 'bg-green-500/20 text-green-300'
+                                  : 'bg-cyan-500/10 text-cyan-300'
+                              }`}
+                            >
                               {order.status}
                             </span>
                           </td>
@@ -650,15 +729,23 @@ export default function JRStoreApp() {
     )
   }
 
-  function AdminInput({ label, value, onChange, type = 'text' }) {
+  function AdminInput({
+    label,
+    value,
+    onChange,
+    type = 'text'
+  }) {
     return (
       <label className="block">
-        <span className="mb-2 block text-sm font-bold text-slate-300">{label}</span>
+        <span className="mb-2 block text-sm font-bold text-slate-300">
+          {label}
+        </span>
+
         <input
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400"
+          className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition focus:border-cyan-400"
         />
       </label>
     )

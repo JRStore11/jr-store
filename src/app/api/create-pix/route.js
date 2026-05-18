@@ -10,12 +10,13 @@ export async function POST(request) {
   try {
     const body = await request.json()
 
-    const result = await payment.create({
+        const result = await payment.create({
       body: {
         transaction_amount: Number(body.price),
         description: body.title || 'Compra JR Store',
         payment_method_id: 'pix',
 
+        notification_url: 'https://google.com',
         payer: {
           email: body.email || 'cliente@email.com',
           first_name: body.name || 'Cliente',
