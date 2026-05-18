@@ -15,7 +15,7 @@ import {
 export default function JRStoreApp() {
   const [view, setView] = useState('store')
   const [adminLogged, setAdminLogged] = useState(false)
-  const [adminEmail, setAdminEmail] = useState('admin@jrstore.com')
+  const [adminEmail, setAdminEmail] = useState('admin2@jrstore.com')
   const [adminPassword, setAdminPassword] = useState('')
   const [loginError, setLoginError] = useState('')
   const [adminTab, setAdminTab] = useState('dashboard')
@@ -206,19 +206,26 @@ export default function JRStoreApp() {
 
   try {
     const response = await fetch('/api/create-pix', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        price: cartTotal,
-        title: 'Compra JR Store',
-        name: customerName || 'Cliente',
-        email: 'cliente@email.com',
-      }),
-    })
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    price: cartTotal,
+    title: 'Compra JR Store',
+    name: customerName || 'Cliente',
+    email: 'cliente@email.com',
+  }),
+})
 
-    const data = await response.json()
+await addOrder({
+  customerName,
+  game: cart.map((item) => item.title).join(', '),
+  price: cartTotal,
+  status: 'pending',
+})
+
+const data = await response.json()
 
     console.log('PIX GERADO:', data)
 

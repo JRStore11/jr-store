@@ -1,36 +1,98 @@
-import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore'
-import app from '../lib/firebase'
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+  serverTimestamp,
+} from 'firebase/firestore'
 
-const db = getFirestore(app)
+import { database } from '../lib/firebase'
+
+// =========================
+// PRODUTOS
+// =========================
 
 export async function getProducts() {
-  const snapshot = await getDocs(collection(db, 'products'))
-  return snapshot.docs.map((document) => ({
-    id: document.id,
-    ...document.data(),
-  }))
+  try {
+    const querySnapshot = await getDocs(collection(database, 'products'))
+
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+  } catch (error) {
+    console.log(error)
+    return []
+  }
 }
 
 export async function addProduct(product) {
-  return await addDoc(collection(db, 'products'), product)
-}
+  try {
+    const docRef = await addDoc(collection(database, 'products'), product)
 
-export async function updateProduct(id, data) {
-  return await updateDoc(doc(db, 'products', id), data)
+    return docRef.id
+  } catch (error) {
+    console.log(error)
+    return null
+  }
 }
 
 export async function deleteProduct(id) {
-  return await deleteDoc(doc(db, 'products', id))
+  try {
+    await deleteDoc(doc(database, 'products', id))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function updateProduct(id, data) {
+  try {
+    await updateDoc(doc(database, 'products', id), data)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// =========================
+// PEDIDOS
+// =========================
+
+export async function addOrder(order) {
+  try {
+    const docRef = await addDoc(collection(database, 'orders'), {
+      ...order,
+      createdAt: serverTimestamp(),
+    })
+
+    return docRef.id
+  } catch (error) {
+    console.log(error)
+    return null
+  }
 }
 
 export async function getOrders() {
-  const snapshot = await getDocs(collection(db, 'orders'))
-  return snapshot.docs.map((document) => ({
-    id: document.id,
-    ...document.data(),
-  }))
+  try {
+    const querySnapshot = await getDocs(collection(database, 'orders'))
+
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+  } catch (error) {
+    console.log(error)
+    return []
+  }
 }
 
-export async function addOrder(order) {
-  return await addDoc(collection(db, 'orders'), order)
+export async function updateOrderStatus(id, status) {
+  try {
+    await updateDoc(doc(database, 'orders', id), {
+      status,
+    })
+  } catch (error) {
+    console.log(error)
+  }
 }
