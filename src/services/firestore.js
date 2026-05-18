@@ -8,7 +8,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore'
 
-import { database } from '../lib/firebase'
+import { db } from '../lib/firebase'
 
 // =========================
 // PRODUTOS
@@ -16,7 +16,7 @@ import { database } from '../lib/firebase'
 
 export async function getProducts() {
   try {
-    const querySnapshot = await getDocs(collection(database, 'products'))
+    const querySnapshot = await getDocs(collection(db, 'products'))
 
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -30,7 +30,7 @@ export async function getProducts() {
 
 export async function addProduct(product) {
   try {
-    const docRef = await addDoc(collection(database, 'products'), product)
+    const docRef = await addDoc(collection(db, 'products'), product)
 
     return docRef.id
   } catch (error) {
@@ -41,7 +41,7 @@ export async function addProduct(product) {
 
 export async function deleteProduct(id) {
   try {
-    await deleteDoc(doc(database, 'products', id))
+    await deleteDoc(doc(db, 'products', id))
   } catch (error) {
     console.log(error)
   }
@@ -49,7 +49,7 @@ export async function deleteProduct(id) {
 
 export async function updateProduct(id, data) {
   try {
-    await updateDoc(doc(database, 'products', id), data)
+    await updateDoc(doc(db, 'products', id), data)
   } catch (error) {
     console.log(error)
   }
@@ -61,7 +61,7 @@ export async function updateProduct(id, data) {
 
 export async function addOrder(order) {
   try {
-    const docRef = await addDoc(collection(database, 'orders'), {
+    const docRef = await addDoc(collection(db, 'orders'), {
       ...order,
       createdAt: serverTimestamp(),
     })
@@ -75,7 +75,7 @@ export async function addOrder(order) {
 
 export async function getOrders() {
   try {
-    const querySnapshot = await getDocs(collection(database, 'orders'))
+    const querySnapshot = await getDocs(collection(db, 'orders'))
 
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -89,7 +89,7 @@ export async function getOrders() {
 
 export async function updateOrderStatus(id, status) {
   try {
-    await updateDoc(doc(database, 'orders', id), {
+    await updateDoc(doc(db, 'orders', id), {
       status,
     })
   } catch (error) {
