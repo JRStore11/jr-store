@@ -351,7 +351,8 @@ const data = await response.json()
         setAdminLogged(true)
         setLoginError('')
       } catch (error) {
-        setLoginError('E-mail ou senha incorretos. Verifique os dados do Firebase Authentication.')
+        setLoginError(error.code)
+console.log(error)
       }
     }
 
