@@ -1149,6 +1149,27 @@ const data = await response.json()
                   </button>
                   {adminLogged && view === 'admin' && (
                   <button
+                    onClick={() => {
+                      setNewGame({
+                        title: game.title || '',
+                        price: game.price || '',
+                        stock: game.stock || '',
+                        image: game.image || '',
+                        category: game.category || 'Ação',
+                        oldPrice: game.oldPrice || '',
+                        featured: game.featured || false,
+                        id: game.id,
+                      })
+                      setAdminTab('products')
+                    }}
+                    className="mt-2 w-full rounded-xl bg-yellow-400 px-4 py-2 font-bold text-black hover:bg-yellow-300"
+                  >
+                    Editar
+                  </button>
+                )}
+
+                {adminLogged && view === 'admin' && (
+                  <button
                     onClick={() => handleDeleteProduct(game.id)}
                     className="mt-2 w-full rounded-xl bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
                   >
