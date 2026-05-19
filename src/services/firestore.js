@@ -18,10 +18,14 @@ export async function getProducts() {
   try {
     const querySnapshot = await getDocs(collection(db, 'products'))
 
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }))
+    return querySnapshot.docs.map((document) => {
+      const data = document.data()
+
+      return {
+        ...data,
+        id: document.id,
+      }
+    })
   } catch (error) {
     console.log(error)
     return []
@@ -30,7 +34,7 @@ export async function getProducts() {
 
 export async function addProduct(product) {
   try {
-    await deleteDoc(doc(db, 'products', String(id)))
+    const docRef = await addDoc(collection(db, 'products'), product)
 
     return docRef.id
   } catch (error) {
