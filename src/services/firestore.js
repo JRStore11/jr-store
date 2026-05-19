@@ -43,7 +43,8 @@ export async function deleteProduct(id) {
   try {
     await deleteDoc(doc(db, 'products', id))
   } catch (error) {
-    console.log(error)
+    console.error('Erro ao excluir produto:', error)
+    throw error
   }
 }
 
