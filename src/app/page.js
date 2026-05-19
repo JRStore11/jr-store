@@ -1147,12 +1147,14 @@ const data = await response.json()
                   >
                     Comprar
                   </button>
+                  {adminLogged && view === 'admin' && (
                   <button
-                  onClick={() => handleDeleteProduct(game.id)}
-                  className="mt-2 w-full rounded-xl bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
-                >
-                  Excluir
-                </button>
+                    onClick={() => handleDeleteProduct(game.id)}
+                    className="mt-2 w-full rounded-xl bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
+                  >
+                    Excluir
+                  </button>
+                )}
                 </div>
               </div>
             </div>
