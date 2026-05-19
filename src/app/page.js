@@ -194,6 +194,17 @@ export default function JRStoreApp() {
   }
 
   function clearCart() {
+    async function handleDeleteProduct(id) {
+  try {
+    await deleteProduct(id)
+
+    const updatedProducts = await getProducts()
+    setGames(updatedProducts)
+  } catch (error) {
+    console.error(error)
+    alert('Erro ao excluir produto')
+  }
+}
     setCart([])
   }
 
@@ -1172,11 +1183,18 @@ const data = await response.json()
                   >
                     Comprar
                   </button>
+                  <button
+                  onClick={() => handleDeleteProduct(game.id)}
+                  className="mt-2 w-full rounded-xl bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
+                >
+                  Excluir
+                </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
+        
 
         {filteredGames.length === 0 && (
           <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-10 text-center">
