@@ -42,7 +42,7 @@ export default function JRStoreApp() {
   })
 
   const [games, setGames] = useState([])
-  
+
   const [newGame, setNewGame] = useState({
   title: '',
   price: '',
@@ -154,18 +154,21 @@ export default function JRStoreApp() {
 
 async function handleDeleteProduct(id) {
   try {
-    const confirmDelete = confirm('Tem certeza que deseja excluir este produto?')
+    const confirmDelete = confirm(`Excluir produto com ID: ${id}?`)
 
     if (!confirmDelete) return
 
-    await deleteProduct(String(id))
+    console.log('ID recebido para excluir:', id)
 
-    setGames((currentGames) =>
-      currentGames.filter((game) => String(game.id) !== String(id))
-    )
+    await deleteProduct(id)
+
+    alert(`Produto excluído no Firebase: ${id}`)
+
+    const updatedProducts = await getProducts()
+    setGames(updatedProducts)
   } catch (error) {
     console.error(error)
-    alert('Erro ao excluir produto')
+    alert(`Erro ao excluir produto: ${error.message}`)
   }
 }
 
