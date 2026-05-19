@@ -194,19 +194,25 @@ export default function JRStoreApp() {
   }
 
   function clearCart() {
-    async function handleDeleteProduct(id) {
-  try {
-    await deleteProduct(id)
+  setCart([])
+}
 
-    const updatedProducts = await getProducts()
-    setGames(updatedProducts)
+async function handleDeleteProduct(id) {
+  try {
+    const confirmDelete = confirm('Tem certeza que deseja excluir este produto?')
+
+    if (!confirmDelete) return
+
+    await deleteProduct(String(id))
+
+    setGames((currentGames) =>
+      currentGames.filter((game) => String(game.id) !== String(id))
+    )
   } catch (error) {
     console.error(error)
     alert('Erro ao excluir produto')
   }
 }
-    setCart([])
-  }
 
   async function openCheckout() {
   if (cart.length === 0) return
