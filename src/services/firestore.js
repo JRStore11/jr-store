@@ -30,7 +30,7 @@ export async function getProducts() {
 
 export async function addProduct(product) {
   try {
-    const docRef = await addDoc(collection(db, 'products'), product)
+    await deleteDoc(doc(db, 'products', String(id)))
 
     return docRef.id
   } catch (error) {
