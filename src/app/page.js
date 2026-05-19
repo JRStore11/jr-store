@@ -41,63 +41,8 @@ export default function JRStoreApp() {
       'Compre suas keys Steam com segurança via PIX e receba o código rapidamente diretamente no WhatsApp.',
   })
 
-  const [games, setGames] = useState([
-    {
-      id: 1,
-      title: 'Resident Evil 4 Remake',
-      price: 119.9,
-      stock: 8,
-      featured: true,
-      category: 'Terror',
-      oldPrice: 179.9,
-      image:
-        'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop',
-    },
-    {
-      id: 2,
-      title: 'Elden Ring',
-      price: 149.9,
-      stock: 5,
-      featured: true,
-      category: 'RPG',
-      oldPrice: 229.9,
-      image:
-        'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop',
-    },
-    {
-      id: 3,
-      title: 'Cyberpunk 2077',
-      price: 99.9,
-      stock: 12,
-      featured: true,
-      category: 'Ação',
-      oldPrice: 149.9,
-      image:
-        'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1200&auto=format&fit=crop',
-    },
-    {
-      id: 4,
-      title: 'GTA V',
-      price: 59.9,
-      stock: 20,
-      featured: true,
-      category: 'Mundo Aberto',
-      oldPrice: 99.9,
-      image:
-        'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=1200&auto=format&fit=crop',
-    },
-  ])
-
-  const [newGame, setNewGame] = useState({
-    title: '',
-    price: '',
-    stock: '',
-    image: '',
-    category: 'Ação',
-    oldPrice: '',
-    featured: true,
-  })
-
+  const [games, setGames] = useState([])
+  
   useEffect(() => {
     async function loadFirebaseData() {
       try {
