@@ -43,6 +43,16 @@ export default function JRStoreApp() {
 
   const [games, setGames] = useState([])
   
+  const [newGame, setNewGame] = useState({
+  title: '',
+  price: '',
+  stock: '',
+  image: '',
+  category: 'Ação',
+  oldPrice: '',
+  featured: true,
+})
+  
   useEffect(() => {
     async function loadFirebaseData() {
       try {
