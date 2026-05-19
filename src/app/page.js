@@ -255,26 +255,44 @@ const data = await response.json()
   }
 
   async function addGame() {
-    if (!newGame.title || !newGame.price) return
+  if (!newGame.title || !newGame.price) return
 
-    const game = {
-      id: Date.now(),
-      title: newGame.title,
-      price: Number(newGame.price),
-      stock: Number(newGame.stock || 0),
-      image:
-        newGame.image ||
-        'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop',
-      category: newGame.category || 'Ação',
-      oldPrice: Number(newGame.oldPrice || 0),
-      featured: newGame.featured,
-    }
-
-    await addProduct(game)
-
-    setGames((currentGames) => [game, ...currentGames])
-    setNewGame({ title: '', price: '', stock: '', image: '', category: 'Ação', oldPrice: '', featured: true })
+  const game = {
+    title: newGame.title,
+    price: Number(newGame.price),
+    stock: Number(newGame.stock || 0),
+    image:
+      newGame.image ||
+      'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop',
+    category: newGame.category || 'Ação',
+    oldPrice: Number(newGame.oldPrice || 0),
+    featured: newGame.featured,
   }
+
+  if (newGame.id) {
+    await updateProduct(newGame.id, game)
+
+    const updatedProducts = await getProducts()
+    setGames(updatedProducts)
+  } else {
+    const productId = await addProduct(game)
+
+    setGames((currentGames) => [
+      { ...game, id: productId },
+      ...currentGames,
+    ])
+  }
+
+  setNewGame({
+    title: '',
+    price: '',
+    stock: '',
+    image: '',
+    category: 'Ação',
+    oldPrice: '',
+    featured: true,
+  })
+}
 
   async function removeGame(gameId) {
     setGames((currentGames) => currentGames.filter((game) => game.id !== gameId))
@@ -557,7 +575,7 @@ const data = await response.json()
                       onClick={addGame}
                       className="w-full rounded-2xl bg-cyan-500 px-6 py-4 font-black text-black transition hover:bg-cyan-400"
                     >
-                      Cadastrar jogo
+                      {newGame.id ? 'Salvar alterações' : 'Cadastrar jogo'}
                     </button>
                   </div>
                 </div>
