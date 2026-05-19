@@ -41,7 +41,11 @@ export async function addProduct(product) {
 
 export async function deleteProduct(id) {
   try {
-    await deleteDoc(doc(db, 'products', id))
+    const productId = String(id)
+
+    await deleteDoc(doc(db, 'products', productId))
+
+    return true
   } catch (error) {
     console.error('Erro ao excluir produto:', error)
     throw error
