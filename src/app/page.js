@@ -764,43 +764,39 @@ const data = await response.json()
               </div>
             )}
           </main>
-     )
-     }
+          
+          
+             function AdminCard({ label, value }) {
+              return (
+                <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
+                  <p className="text-sm font-bold text-slate-400">{label}</p>
+                  <strong className="mt-3 block text-3xl font-black text-cyan-400">
+                    {value}
+                  </strong>
+                </div>
+              )
+            }
 
-  function AdminCard({ label, value }) {
-    return (
-      <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
-        <p className="text-sm font-bold text-slate-400">{label}</p>
-        <strong className="mt-3 block text-3xl font-black text-cyan-400">{value}</strong>
-      </div>
-    )
-  }
+            function AdminInput({ label, value, onChange, type = 'text' }) {
+              return (
+                <label className="block">
+                  <span className="mb-2 block text-sm font-bold text-slate-300">
+                    {label}
+                  </span>
 
-  function AdminInput({
-    label,
-    value,
-    onChange,
-    type = 'text'
-  }) {
-    return (
-      <label className="block">
-        <span className="mb-2 block text-sm font-bold text-slate-300">
-          {label}
-        </span>
+                  <input
+                    type={type}
+                    value={value}
+                    onChange={(event) => onChange(event.target.value)}
+                    className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition focus:border-cyan-400"
+                  />
+                </label>
+              )
+            }
 
-        <input
-          type={type}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition focus:border-cyan-400"
-        />
-      </label>
-    )
-  }
-
-  if (view === 'admin') {
-    return adminLogged ? <AdminPanel /> : <AdminLogin />
-  }
+            if (view === 'admin') {
+              return adminLogged ? <AdminPanel /> : <AdminLogin />
+            }
 
   return (
     <div className="min-h-screen bg-[#0b1120] text-white">
