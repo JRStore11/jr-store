@@ -585,48 +585,80 @@ const data = await response.json()
 
                   <div className="mt-6 space-y-4">
                     {games.map((game) => (
-                      <div key={game.id} className="rounded-2xl bg-white/5 p-4">
-                        <div className="flex flex-col gap-4 md:flex-row md:items-center">
-                          <img src={game.image} alt={game.title} className="h-20 w-20 rounded-xl object-cover" />
+                      <div
+  key={game.id}
+  className="group overflow-hidden rounded-2xl border-2 border-purple-600 bg-[#050816] shadow-lg shadow-purple-900/30 transition hover:-translate-y-1 hover:border-purple-400"
+>
+  <div className="bg-black">
+    <img
+      src={game.image}
+      alt={game.title}
+      className="h-[360px] w-full object-contain bg-black"
+    />
+  </div>
 
-                          <div className="grid flex-1 gap-3 md:grid-cols-4">
-                            <input
-                              value={game.title}
-                              onChange={(event) => updateGame(game.id, 'title', event.target.value)}
-                              className="rounded-xl border border-cyan-500/20 bg-[#0b1120] px-4 py-3 outline-none focus:border-cyan-400"
-                            />
-                            <input
-                              type="number"
-                              value={game.price}
-                              onChange={(event) => updateGame(game.id, 'price', event.target.value)}
-                              className="rounded-xl border border-cyan-500/20 bg-[#0b1120] px-4 py-3 outline-none focus:border-cyan-400"
-                            />
-                            <input
-                              type="number"
-                              value={game.stock}
-                              onChange={(event) => updateGame(game.id, 'stock', event.target.value)}
-                              className="rounded-xl border border-cyan-500/20 bg-[#0b1120] px-4 py-3 outline-none focus:border-cyan-400"
-                            />
-                            <input
-                              value={game.category || ''}
-                              onChange={(event) => updateGame(game.id, 'category', event.target.value)}
-                              className="rounded-xl border border-cyan-500/20 bg-[#0b1120] px-4 py-3 outline-none focus:border-cyan-400"
-                            />
-                          </div>
+  <div className="p-4">
+    <span className="mb-3 inline-flex rounded-lg bg-zinc-800 px-3 py-1 text-xs font-bold text-white">
+      🔑 Chave Steam
+    </span>
 
-                          <button
-                            onClick={() => removeGame(game.id)}
-                            className="rounded-xl bg-red-500/10 px-4 py-3 font-bold text-red-300 transition hover:bg-red-500/20"
-                          >
-                            Remover
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+    <h3 className="min-h-[56px] text-lg font-black leading-tight text-white">
+      {game.title}
+    </h3>
+
+    <div className="mt-3 flex items-center justify-between">
+      <div>
+        <p className="text-2xl font-black text-white">
+          {formatPrice(game.price)}
+        </p>
+        <p className="text-sm text-slate-400">À vista no Pix</p>
+        <p className="mt-1 text-xs text-cyan-300">
+          Estoque: {game.stock} keys
+        </p>
+      </div>
+
+      <div className="rounded-xl bg-cyan-500/20 p-3 text-cyan-300">
+        🎮
+      </div>
+    </div>
+
+    <button
+      disabled={game.stock <= 0}
+      onClick={() => addToCart(game)}
+      className="mt-4 w-full rounded-xl bg-purple-600 px-4 py-3 font-black text-white transition hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      🛒 Comprar agora
+    </button>
+
+    {adminLogged && view === 'admin' && (
+      <button
+        onClick={() => {
+          setNewGame({
+            title: game.title || '',
+            price: game.price || '',
+            stock: game.stock || '',
+            image: game.image || '',
+            category: game.category || 'Ação',
+            oldPrice: game.oldPrice || '',
+            featured: game.featured || false,
+            id: game.id,
+          })
+          setAdminTab('products')
+        }}
+        className="mt-2 w-full rounded-xl bg-yellow-400 px-4 py-2 font-bold text-black hover:bg-yellow-300"
+      >
+        Editar
+      </button>
+    )}
+
+              {adminLogged && view === 'admin' && (
+            <button
+              onClick={() => handleDeleteProduct(game.id)}
+              className="mt-2 w-full rounded-xl bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
+            >
+              Excluir
+            </button>
+          )}
 
             {adminTab === 'orders' && (
               <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
@@ -732,10 +764,8 @@ const data = await response.json()
               </div>
             )}
           </main>
-        </div>
-      </div>
-    )
-  }
+     )
+     }
 
   function AdminCard({ label, value }) {
     return (
@@ -1121,82 +1151,82 @@ const data = await response.json()
 
         <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
           {filteredGames.map((game) => (
-            <div
-              key={game.id}
-              className="group overflow-hidden rounded-3xl border border-cyan-500/10 bg-[#111827] transition hover:-translate-y-2 hover:border-cyan-400/40"
-            >
-              <div className="overflow-hidden">
-                <img
-                  src={game.image}
-                  alt={game.title}
-                  className="h-64 w-full object-cover transition duration-500 group-hover:scale-110"
-                />
-              </div>
-
-              <div className="p-5">
-                <div className="mb-3 flex items-center justify-between">
-                  <span className="rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300">
-                    {game.category || 'Steam Key'}
-                  </span>
-
-                  <span className="text-sm text-slate-400">
-                    {game.stock > 0 ? `${game.stock} keys` : 'Esgotado'}
-                  </span>
-                </div>
-
-                <h4 className="text-xl font-bold">{game.title}</h4>
-
-                <div className="mt-5 flex items-center justify-between">
-                  <span>
-                    {game.oldPrice > game.price && (
-                      <span className="block text-sm text-slate-500 line-through">
-                        {formatPrice(game.oldPrice)}
-                      </span>
-                    )}
-                    <span className="text-2xl font-black text-cyan-400">
-                      {formatPrice(game.price)}
-                    </span>
-                  </span>
-
-                  <button
-                    disabled={game.stock <= 0}
-                    onClick={() => addToCart(game)}
-                    className="rounded-xl bg-cyan-500 px-4 py-2 font-bold text-black transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    Comprar
-                  </button>
-                  {adminLogged && view === 'admin' && (
-                  <button
-                    onClick={() => {
-                      setNewGame({
-                        title: game.title || '',
-                        price: game.price || '',
-                        stock: game.stock || '',
-                        image: game.image || '',
-                        category: game.category || 'Ação',
-                        oldPrice: game.oldPrice || '',
-                        featured: game.featured || false,
-                        id: game.id,
-                      })
-                      setAdminTab('products')
-                    }}
-                    className="mt-2 w-full rounded-xl bg-yellow-400 px-4 py-2 font-bold text-black hover:bg-yellow-300"
-                  >
-                    Editar
-                  </button>
-                )}
-
-                {adminLogged && view === 'admin' && (
-                  <button
-                    onClick={() => handleDeleteProduct(game.id)}
-                    className="mt-2 w-full rounded-xl bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
-                  >
-                    Excluir
-                  </button>
-                )}
-                </div>
-              </div>
+           <div
+            key={game.id}
+            className="group overflow-hidden rounded-2xl border-2 border-purple-600 bg-[#050816] shadow-lg shadow-purple-900/30 transition hover:-translate-y-1 hover:border-purple-400"
+          >
+            <div className="bg-black">
+              <img
+                src={game.image}
+                alt={game.title}
+                className="h-[360px] w-full object-contain bg-black"
+              />
             </div>
+
+            <div className="p-4">
+              <span className="mb-3 inline-flex rounded-lg bg-zinc-800 px-3 py-1 text-xs font-bold text-white">
+                🔑 Chave Steam
+              </span>
+
+              <h3 className="min-h-[56px] text-lg font-black leading-tight text-white">
+                {game.title}
+              </h3>
+
+              <div className="mt-3 flex items-center justify-between">
+                <div>
+                  <p className="text-2xl font-black text-white">
+                    {formatPrice(game.price)}
+                  </p>
+                  <p className="text-sm text-slate-400">À vista no Pix</p>
+                  <p className="mt-1 text-xs text-cyan-300">
+                    Estoque: {game.stock} keys
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-cyan-500/20 p-3 text-cyan-300">
+                  🎮
+                </div>
+              </div>
+
+              <button
+                disabled={game.stock <= 0}
+                onClick={() => addToCart(game)}
+                className="mt-4 w-full rounded-xl bg-purple-600 px-4 py-3 font-black text-white transition hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                🛒 Comprar agora
+              </button>
+
+              {adminLogged && view === 'admin' && (
+                <button
+                  onClick={() => {
+                    setNewGame({
+                      title: game.title || '',
+                      price: game.price || '',
+                      stock: game.stock || '',
+                      image: game.image || '',
+                      category: game.category || 'Ação',
+                      oldPrice: game.oldPrice || '',
+                      featured: game.featured || false,
+                      id: game.id,
+                    })
+                    setAdminTab('products')
+                  }}
+                  className="mt-2 w-full rounded-xl bg-yellow-400 px-4 py-2 font-bold text-black hover:bg-yellow-300"
+                >
+                  Editar
+                </button>
+              )}
+
+              {adminLogged && view === 'admin' && (
+                <button
+                  onClick={() => handleDeleteProduct(game.id)}
+                  className="mt-2 w-full rounded-xl bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
+                >
+                  Excluir
+                </button>
+              )}
+            </div>
+          </div>
           ))}
         </div>
         
