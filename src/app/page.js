@@ -318,45 +318,57 @@ export default function JRStoreApp() {
     return (
       <div
         key={game.id}
-        className="group overflow-hidden rounded-2xl border-2 border-purple-600 bg-[#050816] shadow-lg shadow-purple-900/30 transition hover:-translate-y-1 hover:border-purple-400"
+        className="group animate-[fadeInUp_0.6s_ease-out] overflow-hidden rounded-2xl border-2 border-cyan-500/40 bg-gradient-to-b from-[#111827] to-[#070b14] shadow-lg shadow-purple-900/30 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:border-cyan-400 hover:shadow-2xl hover:shadow-cyan-500/30"
       >
-        <div className="bg-black">
+        <div className="relative bg-black">
+          {game.oldPrice > game.price && (
+          <div className="absolute left-2 top-2 z-10 rounded-md bg-red-500 px-1.5 py-0.5 text-[8px] font-black text-white shadow-lg">
+            🔥 PROMOÇÃO
+          </div>
+        )}
+
+        {game.featured && (
+          <div className="absolute right-2 top-2 z-10 rounded-md bg-purple-600 px-1.5 py-0.5 text-[8px] font-black text-white shadow-lg">
+            ⭐ MAIS VENDIDO
+          </div>
+        )}
+        
           <img
             src={game.image}
             alt={game.title}
-            className="h-[360px] w-full object-contain bg-black"
+            className="h-[170px] w-full object-cover transition duration-300 group-hover:scale-105"
           />
         </div>
 
-        <div className="p-4">
-          <span className="mb-3 inline-flex rounded-lg bg-zinc-800 px-3 py-1 text-xs font-bold text-white">
+        <div className="p-2.5">
+          <span className="mb-2 inline-flex rounded-lg bg-zinc-800 px-2 py-1 text-[10px] font-bold text-white">
             🔑 Chave Steam
           </span>
 
-          <h3 className="min-h-[56px] text-lg font-black leading-tight text-white">
+          <h3 className="min-h-[34px] text-[12px] font-black leading-tight text-white">
             {game.title}
           </h3>
 
           <div className="mt-3 flex items-center justify-between">
             <div>
-              <p className="text-2xl font-black text-white">
+              <p className="text-xl font-black text-white">
                 {formatPrice(game.price)}
               </p>
               <p className="text-sm text-slate-400">À vista no Pix</p>
-              <p className="mt-1 text-xs text-cyan-300">
+              <p className="mt-1 text-xs text-purple-300">
                 Estoque: {game.stock} keys
               </p>
             </div>
 
-            <div className="rounded-xl bg-cyan-500/20 p-3 text-cyan-300">
-              🎮
-            </div>
+           <div className="flex items-center justify-center rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-3 text-lg text-emerald-400">
+  ❖
           </div>
+            </div>
 
           <button
             disabled={Number(game.stock) <= 0}
             onClick={() => addToCart(game)}
-            className="mt-4 w-full rounded-xl bg-purple-600 px-4 py-3 font-black text-white transition hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-2 w-full rounded-xl bg-purple-600 px-2 py-2 text-[12px] font-black text-white transition-all duration-300 hover:bg-purple-500 hover:shadow-lg hover:shadow-purple-500/30 disabled:cursor-not-allowed disabled:opacity-50"
           >
             🛒 Comprar agora
           </button>
@@ -397,9 +409,9 @@ export default function JRStoreApp() {
 
   function AdminLogin() {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#020617] px-6 text-white">
-        <div className="w-full max-w-md rounded-3xl border border-cyan-500/20 bg-[#0b1120] p-8 shadow-2xl">
-          <h1 className="text-4xl font-black text-cyan-400">JR Admin</h1>
+      <div className="flex min-h-screen items-center justify-center bg-[#050008] px-6 text-white">
+        <div className="w-full max-w-md rounded-3xl border border-purple-500/20 bg-[#100018] p-8 shadow-2xl">
+          <h1 className="text-4xl font-black text-purple-400">JR Admin</h1>
           <p className="mt-3 text-slate-400">
             Acesse o painel administrativo da JR Store.
           </p>
@@ -412,7 +424,7 @@ export default function JRStoreApp() {
               type="email"
               value={adminEmail}
               onChange={(event) => setAdminEmail(event.target.value)}
-              className="w-full rounded-2xl border border-cyan-500/20 bg-[#020817] px-5 py-4 text-white outline-none focus:border-cyan-400"
+              className="w-full rounded-2xl border border-purple-500/20 bg-[#020817] px-5 py-4 text-white outline-none focus:border-purple-400"
             />
           </label>
 
@@ -424,7 +436,7 @@ export default function JRStoreApp() {
               type="password"
               value={adminPassword}
               onChange={(event) => setAdminPassword(event.target.value)}
-              className="w-full rounded-2xl border border-cyan-500/20 bg-[#020817] px-5 py-4 text-white outline-none focus:border-cyan-400"
+              className="w-full rounded-2xl border border-purple-500/20 bg-[#020817] px-5 py-4 text-white outline-none focus:border-purple-400"
             />
           </label>
 
@@ -434,14 +446,14 @@ export default function JRStoreApp() {
 
           <button
             onClick={handleLogin}
-            className="mt-6 w-full rounded-2xl bg-cyan-500 px-6 py-4 text-lg font-black text-black hover:bg-cyan-400"
+            className="mt-6 w-full rounded-2xl bg-purple-500 px-6 py-4 text-lg font-black text-black hover:bg-purple-400"
           >
             Entrar
           </button>
 
           <button
             onClick={() => setView('store')}
-            className="mt-3 w-full rounded-2xl border border-cyan-500/30 px-6 py-4 font-bold text-white hover:border-cyan-400"
+            className="mt-3 w-full rounded-2xl border border-purple-500/30 px-6 py-4 font-bold text-white hover:border-cyan-400"
           >
             Voltar para loja
           </button>
@@ -452,9 +464,9 @@ export default function JRStoreApp() {
 
   function AdminPanel() {
     return (
-      <div className="min-h-screen bg-[#020617] text-white">
-        <aside className="fixed left-0 top-0 hidden h-full w-72 border-r border-cyan-500/10 bg-[#030712] p-6 lg:block">
-          <h1 className="text-3xl font-black text-cyan-400">JR Admin</h1>
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top,#1a0826_0%,#050008_45%,#020204_100%)] text-white">
+        <aside className="fixed left-0 top-0 hidden h-full w-72 border-r border-purple-500/10 bg-[#030712] p-6 lg:block">
+          <h1 className="text-3xl font-black text-purple-400">JR Admin</h1>
           <p className="mt-2 text-sm text-slate-400">Painel administrativo</p>
 
           <nav className="mt-8 space-y-3">
@@ -474,7 +486,7 @@ export default function JRStoreApp() {
 
           <button
             onClick={() => setView('store')}
-            className="mt-3 w-full rounded-2xl border border-cyan-500/30 px-4 py-3 font-bold text-white hover:border-cyan-400"
+            className="mt-3 w-full rounded-2xl border border-purple-500/30 px-4 py-3 font-bold text-white hover:border-cyan-400"
           >
             Ver loja
           </button>
@@ -483,7 +495,7 @@ export default function JRStoreApp() {
         <main className="p-6 lg:ml-72">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-4xl font-black text-cyan-400">
+              <h2 className="text-4xl font-black text-purple-400">
                 Painel Admin
               </h2>
               <p className="mt-2 text-slate-400">
@@ -497,7 +509,7 @@ export default function JRStoreApp() {
                   <button
                     key={tab}
                     onClick={() => setAdminTab(tab)}
-                    className="rounded-xl border border-cyan-500/20 px-3 py-2 text-xs"
+                    className="rounded-xl border border-purple-500/20 px-3 py-2 text-xs"
                   >
                     {tab}
                   </button>
@@ -529,8 +541,8 @@ export default function JRStoreApp() {
                 />
               </div>
 
-              <div className="mt-8 rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
-                <h3 className="text-2xl font-black text-cyan-400">Resumo</h3>
+              <div className="mt-8 rounded-3xl border border-purple-500/10 bg-[#12001f] p-6">
+                <h3 className="text-2xl font-black text-purple-400">Resumo</h3>
                 <p className="mt-3 text-slate-300">
                   Seu painel permite cadastrar jogos, editar preços, controlar
                   estoque, configurar PIX/WhatsApp e visualizar pedidos.
@@ -541,8 +553,8 @@ export default function JRStoreApp() {
 
           {adminTab === 'products' && (
             <div className="grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
-              <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
-                <h3 className="text-2xl font-black text-cyan-400">
+              <div className="rounded-3xl border border-purple-500/10 bg-[#12001f] p-6">
+                <h3 className="text-2xl font-black text-purple-400">
                   {newGame.id ? 'Editar jogo' : 'Adicionar jogo'}
                 </h3>
 
@@ -583,15 +595,15 @@ export default function JRStoreApp() {
 
                   <button
                     onClick={addGame}
-                    className="w-full rounded-2xl bg-cyan-500 px-6 py-4 font-black text-black transition hover:bg-cyan-400"
+                    className="w-full rounded-2xl bg-purple-500 px-6 py-4 font-black text-black transition hover:bg-purple-400"
                   >
                     {newGame.id ? 'Salvar alterações' : 'Cadastrar jogo'}
                   </button>
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
-                <h3 className="text-2xl font-black text-cyan-400">
+              <div className="rounded-3xl border border-purple-500/10 bg-[#12001f] p-6">
+                <h3 className="text-2xl font-black text-purple-400">
                   Jogos cadastrados
                 </h3>
 
@@ -613,7 +625,7 @@ export default function JRStoreApp() {
                           onChange={(event) =>
                             updateGame(game.id, 'title', event.target.value)
                           }
-                          className="rounded-xl border border-cyan-500/20 bg-[#0b1120] px-4 py-3 outline-none focus:border-cyan-400"
+                          className="rounded-xl border border-purple-500/20 bg-[#100018] px-4 py-3 outline-none focus:border-purple-400"
                         />
 
                         <input
@@ -622,7 +634,7 @@ export default function JRStoreApp() {
                           onChange={(event) =>
                             updateGame(game.id, 'price', event.target.value)
                           }
-                          className="rounded-xl border border-cyan-500/20 bg-[#0b1120] px-4 py-3 outline-none focus:border-cyan-400"
+                          className="rounded-xl border border-purple-500/20 bg-[#100018] px-4 py-3 outline-none focus:border-purple-400"
                         />
 
                         <input
@@ -631,7 +643,7 @@ export default function JRStoreApp() {
                           onChange={(event) =>
                             updateGame(game.id, 'stock', event.target.value)
                           }
-                          className="rounded-xl border border-cyan-500/20 bg-[#0b1120] px-4 py-3 outline-none focus:border-cyan-400"
+                          className="rounded-xl border border-purple-500/20 bg-[#100018] px-4 py-3 outline-none focus:border-purple-400"
                         />
                       </div>
 
@@ -649,8 +661,8 @@ export default function JRStoreApp() {
           )}
 
           {adminTab === 'orders' && (
-            <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
-              <h3 className="text-2xl font-black text-cyan-400">Pedidos</h3>
+            <div className="rounded-3xl border border-purple-500/10 bg-[#12001f] p-6">
+              <h3 className="text-2xl font-black text-purple-400">Pedidos</h3>
 
               <div className="mt-6 overflow-x-auto">
                 <table className="w-full min-w-[780px] text-left">
@@ -667,8 +679,8 @@ export default function JRStoreApp() {
 
                   <tbody>
                     {orders.map((order) => (
-                      <tr key={order.id} className="border-t border-cyan-500/10">
-                        <td className="p-4 font-bold text-cyan-400">
+                      <tr key={order.id} className="border-t border-purple-500/10">
+                        <td className="p-4 font-bold text-purple-400">
                           {order.id}
                         </td>
                         <td className="p-4">{order.customerName}</td>
@@ -678,7 +690,7 @@ export default function JRStoreApp() {
                         <td className="p-4">
                           <button
                             onClick={() => markOrderAsDelivered(order.id)}
-                            className="rounded-xl bg-cyan-500 px-4 py-2 font-bold text-black"
+                            className="rounded-xl bg-purple-500 px-4 py-2 font-bold text-black"
                           >
                             Marcar entregue
                           </button>
@@ -693,8 +705,8 @@ export default function JRStoreApp() {
 
           {adminTab === 'payment' && (
             <div className="grid gap-8 xl:grid-cols-2">
-              <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
-                <h3 className="text-2xl font-black text-cyan-400">
+              <div className="rounded-3xl border border-purple-500/10 bg-[#12001f] p-6">
+                <h3 className="text-2xl font-black text-purple-400">
                   Pagamento PIX
                 </h3>
 
@@ -728,8 +740,8 @@ export default function JRStoreApp() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
-                <h3 className="text-2xl font-black text-cyan-400">
+              <div className="rounded-3xl border border-purple-500/10 bg-[#12001f] p-6">
+                <h3 className="text-2xl font-black text-purple-400">
                   Informações
                 </h3>
                 <p className="mt-4 text-slate-300">
@@ -742,8 +754,8 @@ export default function JRStoreApp() {
 
           {adminTab === 'appearance' && (
             <div className="grid gap-8 xl:grid-cols-2">
-              <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
-                <h3 className="text-2xl font-black text-cyan-400">
+              <div className="rounded-3xl border border-purple-500/10 bg-[#12001f] p-6">
+                <h3 className="text-2xl font-black text-purple-400">
                   Identidade da loja
                 </h3>
 
@@ -789,11 +801,11 @@ export default function JRStoreApp() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
-                <h3 className="text-2xl font-black text-cyan-400">Prévia</h3>
+              <div className="rounded-3xl border border-purple-500/10 bg-[#12001f] p-6">
+                <h3 className="text-2xl font-black text-purple-400">Prévia</h3>
 
-                <div className="mt-6 rounded-3xl border border-cyan-500/20 bg-[#0b1120] p-8">
-                  <h4 className="text-4xl font-black text-cyan-400">
+                <div className="mt-6 rounded-3xl border border-purple-500/20 bg-[#100018] p-8">
+                  <h4 className="text-4xl font-black text-purple-400">
                     {storeSettings.storeName}
                   </h4>
 
@@ -823,7 +835,7 @@ export default function JRStoreApp() {
         onClick={() => setAdminTab(tab)}
         className={`w-full rounded-2xl px-4 py-3 text-left font-bold transition ${
           adminTab === tab
-            ? 'bg-cyan-500 text-black'
+            ? 'bg-purple-500 text-black'
             : 'bg-white/5 text-slate-300 hover:bg-white/10'
         }`}
       >
@@ -834,9 +846,9 @@ export default function JRStoreApp() {
 
   function AdminCard({ label, value }) {
     return (
-      <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-6">
+      <div className="rounded-3xl border border-purple-500/10 bg-[#12001f] p-6">
         <p className="text-sm font-bold text-slate-400">{label}</p>
-        <strong className="mt-3 block text-3xl font-black text-cyan-400">
+        <strong className="mt-3 block text-3xl font-black text-purple-400">
           {value}
         </strong>
       </div>
@@ -854,7 +866,7 @@ export default function JRStoreApp() {
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full rounded-2xl border border-cyan-500/20 bg-[#0b1120] px-5 py-4 text-white outline-none transition focus:border-cyan-400"
+          className="w-full rounded-2xl border border-purple-500/20 bg-[#100018] px-5 py-4 text-white outline-none transition focus:border-purple-400"
         />
       </label>
     )
@@ -865,77 +877,99 @@ export default function JRStoreApp() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white">
-      <header className="sticky top-0 z-50 border-b border-cyan-500/20 bg-[#020617]/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <button onClick={() => setView('store')} className="text-left">
-            <h1 className="text-3xl font-black text-cyan-400">
-              {storeSettings.logoText}
-            </h1>
-            <p className="text-sm text-slate-400">{storeSettings.slogan}</p>
-          </button>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#1a0826_0%,#050008_45%,#020204_100%)] text-white">
+      <header className="sticky top-0 z-50 border-b border-purple-500/10 bg-[#050008]/95 backdrop-blur">
+  <div className="border-b border-purple-500/10 py-2 text-center text-sm font-bold text-white">
+    <span className="text-purple-400">⚡ Entrega</span>{' '}
+    <span className="rounded-md bg-purple-600 px-2 py-1 text-white">
+      manual via WhatsApp
+    </span>{' '}
+    rápido, seguro e sem espera!
+  </div>
 
-          <nav className="hidden items-center gap-8 text-sm font-bold md:flex">
-            <button onClick={() => setView('store')}>Início</button>
-            <a href="#catalogo">Steam</a>
-            <button onClick={() => setView('admin')}>Admin</button>
-          </nav>
+  <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-1 md:px-6">
+    <button onClick={() => setView('store')} className="flex items-center gap-3">
+     <img
+  src="/logo-jr-store.png"
+  alt="JR Store"
+  className="h-24 w-auto object-contain drop-shadow-[0_0_20px_rgba(59,130,246,0.6)]"
+/>
 
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="rounded-2xl bg-cyan-500 px-5 py-3 font-black text-black hover:bg-cyan-400"
-          >
-            Carrinho {cartItemsCount > 0 && `(${cartItemsCount})`}
-          </button>
-        </div>
-      </header>
+      <div className="text-left">
+        <h1 className="text-xl font-black text-white">
+          {storeSettings.storeName}
+        </h1>
+        <p className="text-xs text-slate-400">{storeSettings.slogan}</p>
+      </div>
+    </button>
 
-      <section className="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1fr_0.8fr]">
-        <div className="flex flex-col justify-center">
-          <span className="w-fit rounded-full bg-cyan-500/10 px-4 py-2 text-sm font-bold text-cyan-300">
-            Loja digital personalizada
-          </span>
+    <input
+      value={searchTerm}
+      onChange={(event) => setSearchTerm(event.target.value)}
+      placeholder="Buscar produto"
+      className="hidden w-full max-w-md rounded-2xl border border-purple-500/20 bg-[#16101f] px-5 py-3 text-white outline-none placeholder:text-slate-400 focus:border-purple-500 md:block"
+    />
 
-          <h2 className="mt-6 text-5xl font-black leading-tight md:text-6xl">
-            {storeSettings.bannerTitle}
-          </h2>
+    <div className="flex items-center gap-3">
+      <button
+        onClick={() => setView('admin')}
+        className="hidden rounded-xl border border-purple-500/20 px-4 py-3 font-bold text-white hover:border-purple-500 md:block"
+      >
+        Admin
+      </button>
 
-          <p className="mt-6 max-w-2xl text-lg text-slate-300">
-            {storeSettings.bannerDescription}
-          </p>
+      <button
+        onClick={() => setIsCartOpen(true)}
+        className="rounded-xl bg-purple-600 px-5 py-3 font-black text-white hover:bg-purple-500"
+      >
+        🛒 Carrinho {cartItemsCount > 0 && `(${cartItemsCount})`}
+      </button>
+    </div>
+  </div>
+</header>
 
-          <div className="mt-8 flex flex-wrap gap-4">
-            <a
-              href="#catalogo"
-              className="rounded-2xl bg-cyan-500 px-6 py-4 font-black text-black hover:bg-cyan-400"
-            >
-              Ver catálogo
-            </a>
+<section className="relative overflow-hidden bg-[#050008]">
+  <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:80px_80px]" />
+  <div className="absolute inset-0 bg-gradient-to-r from-black via-purple-950/40 to-black" />
 
-            <a
-              href={`https://wa.me/${storeSettings.whatsapp}`}
-              target="_blank"
-              className="rounded-2xl border border-cyan-500/30 px-6 py-4 font-bold text-white hover:border-cyan-400"
-            >
-              WhatsApp
-            </a>
-          </div>
-        </div>
+  <div className="relative mx-auto flex min-h-[500px] max-w-7xl animate-[fadeIn_0.8s_ease-out] flex-col items-center justify-center px-6 py-20 text-center">
+    <h2 className="max-w-4xl text-3xl font-black leading-tight text-white md:text-5xl">
+      A <span className="text-purple-500">loja ideal</span> para gamers que buscam preço e confiança!
+    </h2>
 
-        <div className="rounded-3xl border border-cyan-500/20 bg-[#0b1120] p-6 shadow-2xl shadow-cyan-900/20">
-          {games[0]?.image ? (
-            <img
-              src={games[0].image}
-              alt={games[0].title}
-              className="h-[420px] w-full rounded-2xl object-contain bg-black p-3"
-            />
-          ) : (
-            <div className="flex h-[420px] items-center justify-center rounded-2xl bg-black text-slate-500">
-              Cadastre seu primeiro jogo
-            </div>
-          )}
-        </div>
-      </section>
+    <p className="mt-6 max-w-2xl text-base text-slate-300 md:text-xl">
+      {storeSettings.bannerDescription}
+    </p>
+
+    <a
+      href="#catalogo"
+      className="mt-10 rounded-2xl bg-purple-600 px-10 py-5 text-lg font-black text-white transition-all duration-300 hover:scale-105 hover:bg-purple-500 hover:shadow-2xl hover:shadow-cyan-500/30"
+    >
+      Ver produtos →
+</a>
+
+<div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+  <div className="rounded-2xl border border-purple-500/20 bg-white/5 px-5 py-3 backdrop-blur">
+    <p className="text-sm font-bold text-white">
+      ⚡ Entrega rápida
+    </p>
+  </div>
+
+  <div className="rounded-2xl border border-purple-500/20 bg-white/5 px-5 py-3 backdrop-blur">
+    <p className="text-sm font-bold text-white">
+      🔒 Compra segura
+    </p>
+  </div>
+
+  <div className="rounded-2xl border border-purple-500/20 bg-white/5 px-5 py-3 backdrop-blur">
+    <p className="text-sm font-bold text-white">
+      🎮 Keys Steam originais
+    </p>
+  </div>
+</div>
+    
+  </div>
+</section>
 
       <main id="catalogo" className="mx-auto max-w-7xl px-6 py-12">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -951,7 +985,7 @@ export default function JRStoreApp() {
               setSearchTerm('')
               setSelectedCategory('Todos')
             }}
-            className="rounded-2xl border border-cyan-500/20 px-5 py-3 font-bold text-white hover:border-cyan-400"
+            className="rounded-2xl border border-purple-500/20 px-5 py-3 font-bold text-white hover:border-cyan-400"
           >
             Limpar filtros
           </button>
@@ -962,13 +996,13 @@ export default function JRStoreApp() {
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             placeholder="Buscar jogo Steam..."
-            className="rounded-2xl border border-cyan-500/20 bg-[#111827] px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-cyan-400"
+            className="rounded-2xl border border-purple-500/20 bg-[#12001f] px-5 py-4 text-white outline-none placeholder:text-slate-500 focus:border-purple-400"
           />
 
           <select
             value={selectedCategory}
             onChange={(event) => setSelectedCategory(event.target.value)}
-            className="rounded-2xl border border-cyan-500/20 bg-[#111827] px-5 py-4 text-white outline-none focus:border-cyan-400"
+            className="rounded-2xl border border-purple-500/20 bg-[#12001f] px-5 py-4 text-white outline-none focus:border-purple-400"
           >
             {categories.map((category) => (
               <option key={category} value={category}>
@@ -978,15 +1012,15 @@ export default function JRStoreApp() {
           </select>
         </div>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {filteredGames.map((game) => (
             <ProductCard key={game.id} game={game} />
           ))}
         </div>
 
         {filteredGames.length === 0 && (
-          <div className="rounded-3xl border border-cyan-500/10 bg-[#111827] p-10 text-center">
-            <h4 className="text-2xl font-black text-cyan-400">
+          <div className="rounded-3xl border border-purple-500/10 bg-[#12001f] p-10 text-center">
+            <h4 className="text-2xl font-black text-purple-400">
               Nenhum jogo encontrado
             </h4>
             <p className="mt-2 text-slate-400">
@@ -997,10 +1031,10 @@ export default function JRStoreApp() {
       </main>
 
       {isCartOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/70 p-6">
-          <div className="ml-auto h-full max-w-lg overflow-y-auto rounded-3xl bg-[#0b1120] p-6">
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm p-6">
+          <div className="ml-auto h-full w-full max-w-md overflow-y-auto rounded-3xl border border-cyan-500/20 bg-[#0b1120]/95 p-6 shadow-2xl shadow-cyan-500/10 backdrop-blur">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-black text-cyan-400">Carrinho</h3>
+              <h3 className="text-2xl font-black text-purple-400">Carrinho</h3>
               <button onClick={() => setIsCartOpen(false)}>Fechar</button>
             </div>
 
@@ -1008,30 +1042,30 @@ export default function JRStoreApp() {
               {cart.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-2xl border border-cyan-500/10 bg-white/5 p-4"
+                  className="rounded-2xl border border-cyan-500/10 bg-white/[0.03] p-3 transition hover:border-cyan-400/30"
                 >
                   <div className="flex gap-4">
                     <img
                       src={item.image}
                       alt={item.title}
-                      className="h-20 w-16 rounded-xl object-cover"
+                      className="h-16 w-12 rounded-lg object-cover"
                     />
 
                     <div className="flex-1">
                       <h4 className="font-black">{item.title}</h4>
-                      <p className="text-cyan-400">{formatPrice(item.price)}</p>
+                      <p className="text-purple-400">{formatPrice(item.price)}</p>
 
                       <div className="mt-3 flex items-center gap-3">
                         <button
                           onClick={() => decreaseQuantity(item.id)}
-                          className="rounded-lg bg-white/10 px-3 py-1"
+                          className="rounded-lg border border-cyan-500/10 bg-cyan-500/10 px-3 py-1 transition hover:bg-cyan-500/20"
                         >
                           -
                         </button>
                         <span>{item.quantity}</span>
                         <button
                           onClick={() => increaseQuantity(item.id)}
-                          className="rounded-lg bg-white/10 px-3 py-1"
+                          className="rounded-lg border border-cyan-500/10 bg-cyan-500/10 px-3 py-1 transition hover:bg-cyan-500/20"
                         >
                           +
                         </button>
@@ -1049,22 +1083,22 @@ export default function JRStoreApp() {
               ))}
             </div>
 
-            <div className="mt-6 border-t border-cyan-500/10 pt-6">
+            <div className="mt-6 border-t border-purple-500/10 pt-6">
               <div className="flex justify-between text-xl font-black">
                 <span>Total</span>
-                <span className="text-cyan-400">{formatPrice(cartTotal)}</span>
+                <span className="text-purple-400">{formatPrice(cartTotal)}</span>
               </div>
 
               <button
                 onClick={openCheckout}
-                className="mt-6 w-full rounded-2xl bg-cyan-500 px-6 py-4 font-black text-black hover:bg-cyan-400"
+                className="mt-6 w-full rounded-2xl bg-cyan-400 px-6 py-4 font-black text-black transition-all duration-300 hover:scale-[1.02] hover:bg-cyan-300 hover:shadow-xl hover:shadow-cyan-500/30"
               >
                 Finalizar compra
               </button>
 
               <button
                 onClick={clearCart}
-                className="mt-3 w-full rounded-2xl border border-red-500/30 px-6 py-4 font-bold text-red-300"
+                className="mt-3 w-full rounded-2xl border border-red-500/20 bg-red-500/5 px-6 py-4 font-bold text-red-300 transition hover:bg-red-500/10"
               >
                 Limpar carrinho
               </button>
@@ -1075,9 +1109,9 @@ export default function JRStoreApp() {
 
       {checkoutOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 p-6">
-          <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl bg-[#0b1120] p-8">
+          <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl bg-[#100018] p-8">
             <div className="flex items-center justify-between">
-              <h3 className="text-3xl font-black text-cyan-400">
+              <h3 className="text-3xl font-black text-purple-400">
                 Pagamento PIX
               </h3>
               <button onClick={() => setCheckoutOpen(false)}>Fechar</button>
@@ -1095,11 +1129,11 @@ export default function JRStoreApp() {
                 value={customerName}
                 onChange={(event) => setCustomerName(event.target.value)}
                 placeholder="Digite seu nome"
-                className="w-full rounded-2xl border border-cyan-500/20 bg-[#020817] px-5 py-4 text-white outline-none focus:border-cyan-400"
+                className="w-full rounded-2xl border border-purple-500/20 bg-[#020817] px-5 py-4 text-white outline-none focus:border-purple-400"
               />
             </label>
 
-            <div className="mt-6 rounded-2xl border border-cyan-500/10 bg-black p-4 text-left">
+            <div className="mt-6 rounded-2xl border border-purple-500/10 bg-black p-4 text-left">
               <p className="mb-2 text-sm font-bold text-slate-300">
                 PIX copia e cola
               </p>
@@ -1110,20 +1144,54 @@ export default function JRStoreApp() {
 
             <button
               onClick={copyPixCode}
-              className="mt-4 w-full rounded-2xl bg-cyan-500 px-6 py-4 font-black text-black hover:bg-cyan-400"
+              className="mt-4 w-full rounded-2xl bg-purple-500 px-6 py-4 font-black text-black hover:bg-purple-400"
             >
               {copiedPix ? 'Código PIX copiado!' : 'Copiar código PIX'}
             </button>
 
             <button
               onClick={sendReceiptToWhatsapp}
-              className="mt-3 w-full rounded-2xl border border-cyan-500/30 px-6 py-4 font-bold text-white hover:border-cyan-400"
+              className="mt-3 w-full rounded-2xl border border-purple-500/30 px-6 py-4 font-bold text-white hover:border-cyan-400"
             >
               Já paguei — enviar comprovante
             </button>
           </div>
         </div>
       )}
+
+      <style jsx global>{`
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`}</style>
+
+      <a
+        href={`https://wa.me/${storeSettings.whatsapp}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-[120] flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-3xl text-white shadow-2xl shadow-green-500/40 transition-all duration-300 hover:scale-110 hover:bg-green-400"
+      >
+        💬
+      </a>
+
     </div>
   )
 }
